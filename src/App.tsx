@@ -7,6 +7,7 @@ import { CssBaseline } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useMemo } from "react";
 import { QuizListPage } from "./pages/QuizListPage";
+import { LoginPage } from "./pages/LoginPage";
 
 function App() {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -25,9 +26,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Routes>
+        <Route path="/login" element={<LoginPage />} />
         <Route element={<Frame />}>
           <Route path="/quiz" element={<QuizListPage />} />
-          <Route path="/quiz/create" element={<div>create</div>} />
           <Route path="/quiz/:id" element={<div>detail</div>} />
           <Route path="*" element={<Navigate to="/quiz" replace />} />
         </Route>

@@ -60,6 +60,7 @@ export const DrawerCreateQuizForm = ({
         sx={{
           padding: "16px",
         }}
+        noValidate
       >
         <TextField
           fullWidth
