@@ -1,6 +1,6 @@
 import Drawer from "@mui/material/Drawer";
 import { styled } from "@mui/material/styles";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
@@ -15,6 +15,10 @@ import { SelectCategory } from "./SelectCategory";
 import { CATEGORIES } from "../constants";
 import Button from "@mui/material/Button";
 import { InputTags } from "./InputTags";
+import { match } from "ts-pattern";
+import { UploadButton } from "./UploadButton";
+import { useCreateQuizMutation } from "../hooks/useCreateQuizMutation";
+import { uploadS3Image } from "../../../remotes";
 
 export const DrawerCreateQuizForm = ({
   open,
@@ -30,10 +34,119 @@ export const DrawerCreateQuizForm = ({
       quizType: "A_B_IMAGE",
     },
   });
+  const { mutate: createQuiz } = useCreateQuizMutation();
+  const { quizType: watchQuizType } = useWatch({
+    control,
+  });
+  const onSubmit = async (form: CreateQuizFormValues) => {
+    const { quizType } = form;
 
-  const onSubmit = (data: CreateQuizFormValues) => {
-    console.log(data);
+    match(quizType)
+      .with("A_B_IMAGE", () => {})
+      .with("O_X_IMAGE", async () => {
+        let s3Url: string = "";
+        const imageFile = form.questions.imageUrl ?? "";
+        if (imageFile) {
+          const { imageUrl } = await uploadS3Image(imageFile);
+          s3Url = imageUrl;
+        }
+
+        await createQuiz({
+          ...form,
+          quizType: "O_X_IMAGE",
+          question: {
+            ...form.questions,
+            imageUrl: s3Url,
+          },
+        });
+      })
+      .with("O_X_SIMPLE", () => {})
+      .exhaustive();
   };
+
+  const renderQuizTypeForm = () =>
+    match(watchQuizType)
+      .with("A_B_IMAGE", () => (
+        <>
+          <TextField
+            sx={{
+              width: 1,
+            }}
+            margin="dense"
+            label="A 버튼 명"
+            helperText="버튼 A에 나타 낼 텍스트를 보여줍니다."
+            {...register("questions.buttons.A.button.name")}
+          />
+          <UploadButton
+            label="A 이미지 업로드하기"
+            {...register("questions.buttons.A.imageUrl")}
+          />
+          <TextField
+            margin="dense"
+            sx={{
+              width: 1,
+            }}
+            label="B 버튼 명"
+            helperText="버튼 B에 나타 낼 텍스트를 보여줍니다."
+            {...register("questions.buttons.B.button.name")}
+          />
+          <UploadButton
+            label="B 이미지 업로드하기"
+            {...register("questions.buttons.B.imageUrl")}
+          />
+        </>
+      ))
+      .with("O_X_IMAGE", () => (
+        <>
+          <TextField
+            margin="dense"
+            sx={{
+              width: 1,
+            }}
+            label="O 버튼 명"
+            helperText="O 버튼에 나타 낼 텍스트를 보여줍니다."
+            {...register("questions.buttons.O.button.name")}
+          />
+          <UploadButton
+            label="O 이미지 업로드하기"
+            {...register("questions.buttons.O.imageUrl")}
+          />
+          <TextField
+            margin="dense"
+            label="X 버튼 명"
+            sx={{
+              width: 1,
+            }}
+            helperText="버튼 X에 나타 낼 텍스트를 보여줍니다."
+            {...register("questions.buttons.X.button.name")}
+          />
+          <UploadButton
+            label="X 이미지 업로드하기"
+            {...register("questions.buttons.X.imageUrl")}
+          />
+        </>
+      ))
+      .with("O_X_SIMPLE", () => (
+        <>
+          <TextField
+            sx={{
+              width: 1,
+            }}
+            label="O 버튼 명"
+            helperText="버튼 O에 나타 낼 텍스트를 보여줍니다."
+            {...register("questions.buttons.O.button.name")}
+          />
+          <TextField
+            label="X 버튼 명"
+            sx={{
+              width: 1,
+            }}
+            helperText="버튼 X에 나타 낼 텍스트를 보여줍니다."
+            {...register("questions.buttons.X.button.name")}
+          />
+        </>
+      ))
+      .otherwise(() => `Unexpected quizType`);
 
   return (
     <Drawer
@@ -103,11 +216,6 @@ export const DrawerCreateQuizForm = ({
                 label="A/B퀴즈 이미지O"
               />
               <FormControlLabel
-                value="A_B_SIMPLE"
-                control={<Radio />}
-                label="A/B퀴즈 이미지x"
-              />
-              <FormControlLabel
                 value="O_X_IMAGE"
                 control={<Radio />}
                 label="O/X퀴즈 이미지O"
@@ -120,6 +228,7 @@ export const DrawerCreateQuizForm = ({
             </RadioGroup>
           )}
         />
+        {renderQuizTypeForm()}
         <Controller
           control={control}
           name="categoryId"
@@ -146,7 +255,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: "flex-start",
 }));

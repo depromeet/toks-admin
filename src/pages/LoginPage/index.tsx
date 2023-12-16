@@ -13,15 +13,23 @@ export const LoginPage = () => {
   const [errorText, setErrorText] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const _token = formData.get("authToken") as string;
+    const accessToken = import.meta.env.VITE_ADMIN_TOKEN ?? "";
     if (_token !== AUTH_TOKEN) {
       setErrorText("인증 토큰이 틀렸습니다.");
       return;
     }
+
+    if (!accessToken) {
+      setErrorText("env 파일에 ADMIN_TOKEN을 설정해주세요.");
+      return;
+    }
+
     sessionStorage.setItem("token", _token);
+    sessionStorage.setItem("accessToken", accessToken);
     navigate("/quiz", { replace: true });
   };
 
