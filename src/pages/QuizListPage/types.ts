@@ -1,13 +1,12 @@
 export type QuizType = "A_B_IMAGE" | "O_X_IMAGE" | "O_X_SIMPLE";
-export type AB = "A" | "B";
 export type OX = "O" | "X";
-export type QuizButtonType = AB | OX;
+export type QuizButtonType = OX;
 
 export interface CreateQuizFormValues {
   title: string;
   tags: string[];
   categoryId: string;
-  questions: QuestionFormValues;
+  question: QuestionFormValues;
   quizType: QuizType;
   description: string;
   answer: QuizButtonType;
@@ -26,7 +25,10 @@ export interface QuestionFormValues {
   question: string;
   imageUrl?: File;
   buttons: {
-    [key in QuizButtonType]: QuizButton;
+    [key in QuizButtonType]: {
+      imageUrl?: File;
+      button: { name: string };
+    };
   };
 }
 
@@ -71,7 +73,7 @@ export interface OXSimpleQuiz extends BaseQuiz {
 }
 
 export interface OXImageQuiz extends BaseQuiz {
-  QuizType: "O_X_IMAGE";
+  quizType: "O_X_IMAGE";
   question: {
     question: string;
     imageUrl: string;
@@ -91,7 +93,7 @@ export interface OXImageQuiz extends BaseQuiz {
 }
 
 export interface ABImageQuiz extends BaseQuiz {
-  QuizType: "A_B_IMAGE";
+  quizType: "A_B_IMAGE";
   question: {
     question: string;
     buttons: {

@@ -10,7 +10,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
-import { CreateQuizFormValues } from "../types";
+import { CreateQuizFormValues, Quiz } from "../types";
 import { SelectCategory } from "./SelectCategory";
 import { CATEGORIES } from "../constants";
 import Button from "@mui/material/Button";
@@ -27,40 +27,98 @@ export const DrawerCreateQuizForm = ({
   open: boolean;
   onClose: VoidFunction;
 }) => {
-  const { register, control, handleSubmit } = useForm<CreateQuizFormValues>({
-    defaultValues: {
-      tags: [],
-      categoryId: CATEGORIES[0].id,
-      quizType: "A_B_IMAGE",
-    },
-  });
-  const { mutate: createQuiz } = useCreateQuizMutation();
+  const { register, control, handleSubmit, reset } =
+    useForm<CreateQuizFormValues>({
+      defaultValues: {
+        title: "",
+        tags: [],
+        question: {
+          buttons: {
+            O: {
+              button: {
+                name: "",
+              },
+              imageUrl: undefined,
+            },
+            X: {
+              button: {
+                name: "",
+              },
+              imageUrl: undefined,
+            },
+          },
+        },
+        categoryId: CATEGORIES[0].id,
+      },
+    });
+  const { mutateAsync: createQuiz } = useCreateQuizMutation();
   const { quizType: watchQuizType } = useWatch({
     control,
   });
   const onSubmit = async (form: CreateQuizFormValues) => {
-    const { quizType } = form;
-
-    match(quizType)
-      .with("A_B_IMAGE", () => {})
+    match(form.quizType)
+      .with("O_X_SIMPLE", async () => {
+        const _question: Quiz = {
+          ...form,
+          quizType: "O_X_SIMPLE",
+        };
+        await createQuiz(_question);
+      })
       .with("O_X_IMAGE", async () => {
         let s3Url: string = "";
-        const imageFile = form.questions.imageUrl ?? "";
+        const imageFile = form.question.imageUrl ?? "";
         if (imageFile) {
           const { imageUrl } = await uploadS3Image(imageFile);
           s3Url = imageUrl;
         }
-
-        await createQuiz({
+        const _question: Quiz = {
           ...form,
-          quizType: "O_X_IMAGE",
           question: {
-            ...form.questions,
+            ...form.question,
             imageUrl: s3Url,
           },
-        });
+          quizType: "O_X_IMAGE",
+        };
+        await createQuiz(_question);
       })
-      .with("O_X_SIMPLE", () => {})
+      .with("A_B_IMAGE", async () => {
+        let O이미지URL: string = "";
+        let X이미지URL: string = "";
+        const O이미지 = form.question.buttons.O.imageUrl ?? "";
+        const X이미지 = form.question.buttons.X.imageUrl ?? "";
+        if (O이미지) {
+          const { imageUrl } = await uploadS3Image(O이미지);
+          O이미지URL = imageUrl;
+        }
+
+        if (X이미지) {
+          const { imageUrl } = await uploadS3Image(X이미지);
+          X이미지URL = imageUrl;
+        }
+
+        const _question: Quiz = {
+          ...form,
+          question: {
+            ...form.question,
+            buttons: {
+              A: {
+                imageUrl: O이미지URL,
+                button: {
+                  ...form.question.buttons.O.button,
+                },
+              },
+              B: {
+                imageUrl: X이미지URL,
+                button: {
+                  ...form.question.buttons.X.button,
+                },
+              },
+            },
+          },
+          quizType: "A_B_IMAGE",
+        };
+        await createQuiz(_question);
+      })
       .exhaustive();
   };
 
@@ -75,11 +133,13 @@ export const DrawerCreateQuizForm = ({
             margin="dense"
             label="A 버튼 명"
             helperText="버튼 A에 나타 낼 텍스트를 보여줍니다."
-            {...register("questions.buttons.A.button.name")}
+            {...register("question.buttons.O.button.name")}
           />
           <UploadButton
             label="A 이미지 업로드하기"
-            {...register("questions.buttons.A.imageUrl")}
+            {...register("question.buttons.O.imageUrl", {
+              required: true,
+            })}
           />
           <TextField
             margin="dense"
@@ -88,11 +148,13 @@ export const DrawerCreateQuizForm = ({
             }}
             label="B 버튼 명"
             helperText="버튼 B에 나타 낼 텍스트를 보여줍니다."
-            {...register("questions.buttons.B.button.name")}
+            {...register("question.buttons.X.button.name")}
           />
           <UploadButton
             label="B 이미지 업로드하기"
-            {...register("questions.buttons.B.imageUrl")}
+            {...register("question.buttons.X.imageUrl", {
+              required: true,
+            })}
           />
         </>
       ))
@@ -105,11 +167,11 @@ export const DrawerCreateQuizForm = ({
             }}
             label="O 버튼 명"
             helperText="O 버튼에 나타 낼 텍스트를 보여줍니다."
-            {...register("questions.buttons.O.button.name")}
+            {...register("question.buttons.O.button.name")}
           />
           <UploadButton
             label="O 이미지 업로드하기"
-            {...register("questions.buttons.O.imageUrl")}
+            {...register("question.buttons.O.imageUrl", { required: true })}
           />
           <TextField
             margin="dense"
@@ -118,11 +180,13 @@ export const DrawerCreateQuizForm = ({
               width: 1,
             }}
             helperText="버튼 X에 나타 낼 텍스트를 보여줍니다."
-            {...register("questions.buttons.X.button.name")}
+            {...register("question.buttons.X.button.name")}
           />
           <UploadButton
             label="X 이미지 업로드하기"
-            {...register("questions.buttons.X.imageUrl")}
+            {...register("question.buttons.X.imageUrl", {
+              required: true,
+            })}
           />
         </>
       ))
@@ -134,7 +198,7 @@ export const DrawerCreateQuizForm = ({
             }}
             label="O 버튼 명"
             helperText="버튼 O에 나타 낼 텍스트를 보여줍니다."
-            {...register("questions.buttons.O.button.name")}
+            {...register("question.buttons.O.button.name")}
           />
           <TextField
             label="X 버튼 명"
@@ -142,11 +206,11 @@ export const DrawerCreateQuizForm = ({
               width: 1,
             }}
             helperText="버튼 X에 나타 낼 텍스트를 보여줍니다."
-            {...register("questions.buttons.X.button.name")}
+            {...register("question.buttons.X.button.name")}
           />
         </>
       ))
-      .otherwise(() => `Unexpected quizType`);
+      .otherwise(() => <FormLabel>퀴즈 타입을 선택해주세요.</FormLabel>);
 
   return (
     <Drawer
