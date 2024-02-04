@@ -20,7 +20,7 @@ import { UploadButton } from "./UploadButton";
 import { useCreateQuizMutation } from "../hooks/useCreateQuizMutation";
 import { uploadS3Image } from "../../../remotes";
 
-export const DrawerCreateQuizForm = ({
+export const DrawerCreateAndUpdateQuizForm = ({
   open,
   onClose,
 }: {
@@ -65,26 +65,46 @@ export const DrawerCreateQuizForm = ({
       })
       .with("O_X_IMAGE", async () => {
         let s3Url: string = "";
-        const imageFile = form.question.imageUrl ?? "";
+        const imageFile = form.question.imageUrl?.[0] ?? "";
         if (imageFile) {
           const { imageUrl } = await uploadS3Image(imageFile);
           s3Url = imageUrl;
         }
+
+        if (!imageFile) {
+          return;
+        }
+
         const _question: Quiz = {
           ...form,
           question: {
             ...form.question,
             imageUrl: s3Url,
+            buttons: {
+              O: {
+                button: {
+                  name: form.question.buttons.O.button.name,
+                },
+              },
+              X: {
+                button: {
+                  name: form.question.buttons.X.button.name,
+                },
+              },
+            },
           },
           quizType: "O_X_IMAGE",
         };
-        await createQuiz(_question);
+
+        console.log(_question);
+        // await createQuiz(_question);
       })
       .with("A_B_IMAGE", async () => {
         let O이미지URL: string = "";
         let X이미지URL: string = "";
-        const O이미지 = form.question.buttons.O.imageUrl ?? "";
-        const X이미지 = form.question.buttons.X.imageUrl ?? "";
+        const O이미지 = form.question.buttons.O.imageUrl?.[0] ?? "";
+        const X이미지 = form.question.buttons.X.imageUrl?.[0] ?? "";
+
         if (O이미지) {
           const { imageUrl } = await uploadS3Image(O이미지);
           O이미지URL = imageUrl;
@@ -93,6 +113,10 @@ export const DrawerCreateQuizForm = ({
         if (X이미지) {
           const { imageUrl } = await uploadS3Image(X이미지);
           X이미지URL = imageUrl;
+        }
+
+        if (!O이미지URL || !X이미지URL) {
+          return;
         }
 
         const _question: Quiz = {
@@ -116,6 +140,7 @@ export const DrawerCreateQuizForm = ({
           },
           quizType: "A_B_IMAGE",
         };
+
         await createQuiz(_question);
       })
       .exhaustive();
@@ -159,6 +184,10 @@ export const DrawerCreateQuizForm = ({
       ))
       .with("O_X_IMAGE", () => (
         <>
+          <UploadButton
+            label="퀴즈 이미지 업로드하기"
+            {...register("question.imageUrl", { required: true })}
+          />
           <TextField
             margin="dense"
             sx={{
@@ -168,10 +197,6 @@ export const DrawerCreateQuizForm = ({
             helperText="O 버튼에 나타 낼 텍스트를 보여줍니다."
             {...register("question.buttons.O.button.name")}
           />
-          <UploadButton
-            label="O 이미지 업로드하기"
-            {...register("question.buttons.O.imageUrl", { required: true })}
-          />
           <TextField
             margin="dense"
             label="X 버튼 명"
@@ -180,12 +205,6 @@ export const DrawerCreateQuizForm = ({
             }}
             helperText="버튼 X에 나타 낼 텍스트를 보여줍니다."
             {...register("question.buttons.X.button.name")}
-          />
-          <UploadButton
-            label="X 이미지 업로드하기"
-            {...register("question.buttons.X.imageUrl", {
-              required: true,
-            })}
           />
         </>
       ))
@@ -268,7 +287,7 @@ export const DrawerCreateQuizForm = ({
             <RadioGroup
               aria-labelledby="quiz-type-label"
               defaultValue={value}
-              value={value}
+              value={value ?? null}
               onChange={(e) => {
                 onChange(e.target.value);
               }}

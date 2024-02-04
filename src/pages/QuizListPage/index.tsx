@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import { DrawerCreateQuizForm } from "./components/DrawerCreateQuizForm";
+import { DrawerCreateAndUpdateQuizForm } from "./components/DrawerCreateAndUpdateQuizForm";
 
 export const QuizListPage = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
@@ -18,12 +18,15 @@ export const QuizListPage = () => {
       >
         <AddIcon />
       </Fab>
-      <DrawerCreateQuizForm
-        open={isOpenDrawer}
-        onClose={() => {
-          setIsOpenDrawer(false);
-        }}
-      />
+      {/* 귀찮아서 DOM 날려서 데이터 초기화 */}
+      {isOpenDrawer && (
+        <DrawerCreateAndUpdateQuizForm
+          open={isOpenDrawer}
+          onClose={() => {
+            setIsOpenDrawer(false);
+          }}
+        />
+      )}
     </Box>
   );
 };

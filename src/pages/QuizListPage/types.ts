@@ -23,10 +23,10 @@ export type Quiz = OXSimpleQuiz | OXImageQuiz | ABImageQuiz;
 
 export interface QuestionFormValues {
   question: string;
-  imageUrl?: File;
+  imageUrl?: File[];
   buttons: {
     [key in QuizButtonType]: {
-      imageUrl?: File;
+      imageUrl?: File[];
       button: { name: string };
     };
   };
@@ -35,9 +35,9 @@ export interface QuestionFormValues {
 export interface Question {
   question: string;
   imageUrl?: string;
-  buttons: {
-    [key in QuizButtonType]: QuizButton;
-  };
+  // buttons: {
+  //   [key in QuizButtonType]: QuizButton;
+  // };
 }
 
 export interface QuizButton {
