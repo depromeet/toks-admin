@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { Categories } from "./types";
 
 export const CATEGORIES: Categories[] = [
@@ -194,3 +195,56 @@ export const CATEGORIES: Categories[] = [
     description: "콘텐츠 마케팅",
   },
 ];
+
+export const schema = z.object({
+  title: z.string(),
+  tags: z.string().array().default([]),
+  categoryId: z.string().default(""),
+  question: z.object({
+    question: z.string(),
+    imageUrl: z.union([z.string(), z.custom<File>()]).optional(),
+    buttons: z.object({
+      A: z
+        .object({
+          imageUrl: z.union([z.string(), z.custom<File>()]).optional(),
+          button: z.object({
+            name: z.string(),
+          }),
+        })
+        .optional(),
+      B: z
+        .object({
+          imageUrl: z.union([z.string(), z.custom<File>()]).optional(),
+          button: z.object({
+            name: z.string(),
+          }),
+        })
+        .optional(),
+      O: z
+        .object({
+          imageUrl: z.union([z.string(), z.custom<File>()]).optional(),
+          button: z.object({
+            name: z.string(),
+          }),
+        })
+        .optional(),
+      X: z
+        .object({
+          imageUrl: z.union([z.string(), z.custom<File>()]).optional(),
+          button: z.object({
+            name: z.string(),
+          }),
+        })
+        .optional(),
+    }),
+  }),
+  quizType: z
+    .union([
+      z.literal("A_B_IMAGE"),
+      z.literal("O_X_IMAGE"),
+      z.literal("O_X_SIMPLE"),
+    ])
+    .default("A_B_IMAGE"),
+  description: z.string().optional(),
+  answer: z.union([z.literal("O"), z.literal("X")]).optional(),
+});

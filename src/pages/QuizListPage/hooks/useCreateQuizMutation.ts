@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { http } from "../../../utils/http";
-import { Quiz } from "../types";
+import { CreateQuizFormValues } from "../types";
 
 export const useCreateQuizMutation = () => {
   return useMutation({
-    mutationFn: async (quiz: Quiz) =>
+    mutationFn: async (quiz: CreateQuizFormValues) =>
       await http.post("/api/v1/admin/quizzes", quiz),
   });
 };

@@ -1,17 +1,26 @@
 import { Box, Button } from "@mui/material";
-import { InputHTMLAttributes, forwardRef, useState } from "react";
+import { InputHTMLAttributes, forwardRef, useEffect, useState } from "react";
 
 export const UploadButton = forwardRef<
   HTMLInputElement,
-  { label: string } & InputHTMLAttributes<HTMLInputElement>
+  {
+    label: string;
+    temporaryImage?: string;
+    value?: string | File;
+  } & Omit<InputHTMLAttributes<HTMLInputElement>, "value">
 >(
   (
     {
       label,
       value,
       onChange,
+      temporaryImage,
       ...rest
-    }: { label: string } & InputHTMLAttributes<HTMLInputElement>,
+    }: {
+      value?: string | File;
+      label: string;
+      temporaryImage?: string;
+    } & Omit<InputHTMLAttributes<HTMLInputElement>, "value">,
     ref
   ) => {
     const [thumbnailUrl, setThumbnailUrl] = useState("");
@@ -37,22 +46,23 @@ export const UploadButton = forwardRef<
           marginTop: "16px",
         }}
       >
-        {thumbnailUrl && (
-          <Box
-            sx={{
-              position: "relative",
-              width: "200px",
-              height: "200px",
-              "& img": {
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              },
-            }}
-          >
-            <img src={thumbnailUrl} alt="" />
-          </Box>
-        )}
+        <Box
+          sx={{
+            position: "relative",
+            width: "200px",
+            height: "200px",
+            "& img": {
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            },
+          }}
+        >
+          {!thumbnailUrl && temporaryImage && (
+            <img src={temporaryImage} alt="" />
+          )}
+          {thumbnailUrl && <img src={thumbnailUrl} alt="" />}
+        </Box>
         <Button variant="contained" component="label">
           {label}
           <input
