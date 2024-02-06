@@ -1,5 +1,5 @@
 import { Box, Button } from "@mui/material";
-import { InputHTMLAttributes, forwardRef, useEffect, useState } from "react";
+import { InputHTMLAttributes, forwardRef, useState } from "react";
 
 export const UploadButton = forwardRef<
   HTMLInputElement,
