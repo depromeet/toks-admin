@@ -15,19 +15,21 @@ export const InputTags = ({
   const handleDelete = (value: string) => {
     const newtags = tags.filter((val) => val !== value);
     SetTags(newtags);
+    onChange(newtags);
   };
 
   const handleOnSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tags.length <= 5 && tagRef.current) {
       e.preventDefault();
       SetTags([...tags, tagRef.current.value]);
+      onChange([...tags, tagRef.current.value]);
       tagRef.current.value = "";
     }
   };
 
   useEffect(() => {
-    onChange(tags);
-  }, [tags]);
+    SetTags(value);
+  }, [value]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -39,7 +41,7 @@ export const InputTags = ({
         size="small"
         sx={{ margin: "1rem 0" }}
         margin="none"
-        placeholder={"태그를 입력 후, 엔터를 눌러주세요."}
+        placeholder={"태그를 입력 후, 엔터를 눌러주세요.(선택)"}
         InputProps={{
           startAdornment: (
             <Box sx={{ margin: "0 0.2rem 0 0", display: "flex" }}>
