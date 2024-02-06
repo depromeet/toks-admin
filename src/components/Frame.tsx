@@ -21,7 +21,7 @@ export const Frame = () => {
     <StyledFrame
       style={{
         width: width,
-        height: height,
+        height: `calc(${height}px - 80px)`,
       }}
     >
       <Header />
