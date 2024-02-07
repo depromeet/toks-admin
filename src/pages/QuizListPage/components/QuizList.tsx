@@ -14,7 +14,7 @@ export const QuizList = () => {
 
   const { data: pagination } = useQuizListQuery({
     page,
-    pageSize: 8,
+    pageSize: 9,
   });
 
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {

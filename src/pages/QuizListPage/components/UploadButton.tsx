@@ -33,7 +33,6 @@ export const UploadButton = forwardRef<
           setThumbnailUrl(e.target?.result as string);
         };
       }
-
       onChange?.(e);
     };
 
