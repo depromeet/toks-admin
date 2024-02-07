@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Quiz, QuizType } from "../types";
 import { Box, Chip, Tooltip } from "@mui/material";
-import { P, match } from "ts-pattern";
+import { match } from "ts-pattern";
 
 type QuizCardProps = Quiz & {
   onEdit: VoidFunction;
