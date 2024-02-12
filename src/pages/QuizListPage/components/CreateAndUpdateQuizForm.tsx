@@ -365,7 +365,7 @@ export const CreateAndUpdateQuizForm = ({
               width: "100%",
             }}
           >
-            퀴즈 생성하기
+            {selectedQuiz ? "퀴즈 수정하기" : "퀴즈 생성하기"}
           </Button>
         </Box>
       </FormProvider>

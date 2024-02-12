@@ -11,7 +11,7 @@ export const useUpdateQuizMutation = () => {
       quiz: CreateQuizFormValues;
       id: number;
     }) => {
-      return await http.patch(`/api/v1/admin/quizzes?quizId=${id}`, quiz);
+      return await http.patch(`/api/v1/admin/quizzes/${id}`, quiz);
     },
   });
 };
