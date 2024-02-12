@@ -293,16 +293,19 @@ export const CreateAndUpdateQuizForm = ({
               >
                 <FormControlLabel
                   value="A_B_IMAGE"
+                  disabled={!!selectedQuiz}
                   control={<Radio />}
                   label="A/B퀴즈 이미지O"
                 />
                 <FormControlLabel
                   value="O_X_IMAGE"
+                  disabled={!!selectedQuiz}
                   control={<Radio />}
                   label="O/X퀴즈 이미지O"
                 />
                 <FormControlLabel
                   value="O_X_SIMPLE"
+                  disabled={!!selectedQuiz}
                   control={<Radio />}
                   label="O/X퀴즈 이미지X"
                 />
