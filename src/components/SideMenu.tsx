@@ -12,6 +12,10 @@ const LIST_LINKS = [
     label: "퀴즈 리스트",
     href: "/quiz",
   },
+  {
+    label: "배너 리스트",
+    href: "/banner",
+  },
 ];
 
 export const SideMenu = ({

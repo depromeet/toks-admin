@@ -22,6 +22,7 @@ export const Frame = () => {
       style={{
         width: width,
         height: `calc(${height}px - 80px)`,
+        marginTop: "64px",
       }}
     >
       <Header />
