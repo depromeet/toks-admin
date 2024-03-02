@@ -25,16 +25,19 @@ export const BannerList = ({ width }: { width: number }) => {
     });
   };
 
+  const sameSequenceCountList = pagination?.sameSequenceCountList || [];
+
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
         gap: "20px",
-
         maxWidth: "480px",
         width: `${width}px`,
         minWidth: "320px",
+        height: "80%",
+        overflowY: "auto",
       }}
     >
       {pagination.content?.map((banner) => (
@@ -43,6 +46,7 @@ export const BannerList = ({ width }: { width: number }) => {
           onRemoveButtonClick={handleDelete(banner.id)}
           onToggleButtonClick={handleToggle(banner)}
           isPending={isPending}
+          isSameSequence={sameSequenceCountList.includes(banner.seq)}
           {...banner}
         />
       ))}

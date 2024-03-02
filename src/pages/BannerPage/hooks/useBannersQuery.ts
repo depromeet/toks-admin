@@ -20,9 +20,25 @@ export const useBannersQuery = () => {
     select: (data) => {
       const { content } = data;
       content.sort((a, b) => a.seq - b.seq);
+
+      const sameSequenceCountList = content.reduce<number[]>(
+        (acc, banner, index) => {
+          if (index === 0) {
+            return acc;
+          }
+          const prevBanner = content[index - 1];
+          if (prevBanner.seq === banner.seq) {
+            return [...acc, banner.seq];
+          }
+          return acc;
+        },
+        []
+      );
+
       return {
         ...data,
         content,
+        sameSequenceCountList,
       };
     },
   });

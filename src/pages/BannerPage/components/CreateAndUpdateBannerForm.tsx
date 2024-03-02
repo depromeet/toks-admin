@@ -27,7 +27,6 @@ export const CreateAndUpdateBannerForm = () => {
     await mutateAsync({
       ...formValue,
       imageUrl: s3ImageUrl,
-      seq: 1,
       isActive: true,
     });
 
@@ -81,6 +80,17 @@ export const CreateAndUpdateBannerForm = () => {
             }}
           />
         )}
+      />
+      <TextField
+        type="number"
+        fullWidth
+        label="순서(최소 1, 숫자가 낮을수록 먼저 보여집니다)"
+        variant="filled"
+        required
+        margin="dense"
+        error={!!formState.errors.seq}
+        helperText={formState.errors.seq?.message}
+        {...register("seq", { required: "필수 값 이에요." })}
       />
       <Button type="submit" variant="contained">
         생성하기
