@@ -1,30 +1,20 @@
-# React + TypeScript + Vite
+## Toks Admin
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+`tokstudy.com` 서비스를 관리하기 위한 백오피스 서비스입니다.  
+개발자 의존도 없이 운영할 수 있도록 세팅합니다.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+### 퀴즈 CRUD 기능 제공
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- 퀴즈 리스트
+![image](https://github.com/depromeet/toks-admin/assets/60251579/9cd7023f-2c17-4fa1-be4f-08f40a41fee8)
 
-- Configure the top-level `parserOptions` property like this:
+- 퀴즈 생성/수정
+![image](https://github.com/depromeet/toks-admin/assets/60251579/eacb336a-fe09-45e7-958d-f82d89df308e)
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+### 배너 기능 제공
+
+![image](https://github.com/depromeet/toks-admin/assets/60251579/c4338240-fdc5-4931-b1cf-5648456d25d5)
